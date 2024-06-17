@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.java.mapper.MsTaskMapper">
+
+    <resultMap id="getTaskDtlByIdMap" type="com.java.entity.vo.task.MsTaskDtlVo">
+        <result property="grade" column="grade"></result>
+        <result property="taskName" column="task_name"></result>
+        <result property="beginTime" column="begin_time"></result>
+        <result property="endTime" column="end_time"></result>
+        <collection property="testpaperVoList" ofType="com.java.entity.vo.testpaper.MsTestpaperTaskVo">
+            <id property="testpaperId" column="testpaper_id"></id>
+            <result property="testpaperName" column="testpaper_name"></result>
+            <result property="subjectName" column="subject_name"></result>
+            <result property="createTime" column="create_time"></result>
+        </collection>
+    </resultMap>
+    <select id="getTaskDtlById" resultMap="getTaskDtlByIdMap">
+        SELECT
+            t1.grade,
+            t1.begin_time,
+            t1.end_time,
+            t1.task_name,
+            t2.testpaper_id,
+            t3.testpaper_name,
+            t3.create_by,
+            t4.subject_name
+        from ms_task t1 LEFT JOIN
+             ms_task_testpaper t2 on t1.task_id = t2.task_id
+                        LEFT JOIN ms_testpaper t3
+                                  ON t3.testpaper_id = t2.testpaper_id
+                        LEFT JOIN ms_subject t4
+                                  on t4.subject_id = t3.subject_id
+        where t1.task_id = #{taskId} and t1.del_flag != '2'
+    </select>
+
+    <insert id="insertTaskTestpaper">
+        insert into ms_task_testpaper (task_id, testpaper_id) value <foreach collection="testpaperIds" separator="," item="testpaperId">
+        (#{taskId},#{testpaperId})
+    </foreach>
+    </insert>
+
+    <delete id="deleteRelated">
+        delete from ms_task_testpaper where task_id = #{taskId}
+    </delete>
+</mapper>

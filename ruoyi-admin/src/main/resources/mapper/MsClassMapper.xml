@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.java.mapper.MsClassMapper">
+
+
+    <resultMap id="listMap" type="com.java.entity.vo.user.MsClassStudentPageVo">
+        <id property="classId" column="class_id"></id>
+        <result property="className" column="class_name"></result>
+        <collection property="userList" ofType="com.java.entity.vo.user.MsStudentVo">
+            <id property="userId" column="user_id"></id>
+            <result property="nickName" column="nick_name"></result>
+        </collection>
+    </resultMap>
+    <select id="queryList" resultMap="listMap">
+        SELECT
+            t1.class_id,
+            t1.class_name,
+            t3.user_id,
+            t3.nick_name
+        FROM
+            ms_class t1
+                LEFT JOIN ms_user_class t2 ON t1.class_id = t2.class_id
+                LEFT JOIN sys_user t3 ON t2.user_id = t3.user_id
+        ${ew.customSqlSegment}
+    </select>
+
+
+</mapper>

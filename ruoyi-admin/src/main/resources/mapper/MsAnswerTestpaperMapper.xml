@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.java.mapper.MsAnswerTestpaperMapper">
+    <resultMap id="selectTestpaperByStatusMap" type="com.java.entity.vo.answerTestPaperCorret.MsAnswerTestpaperVo">
+        <id property="answerTestpaperId" column="answer_testpaper_id"></id>
+        <result property="testpaperName" column="testpaper_name"></result>
+        <result property="nickName" column="nick_name"></result>
+        <result property="scoreTotal" column="score_total"></result>
+        <result property="score" column="score"></result>
+        <result property="userId" column="user_id"></result>
+        <result property="topicToal" column="topic_total"></result>
+        <result property="topicRight" column="topic_right"></result>
+        <result property="createTime" column="create_time"></result>
+
+    </resultMap>
+    <select id="selectTestpaperByStatus" resultMap="selectTestpaperByStatusMap">
+        SELECT
+            t1.answer_testpaper_id,
+            t3.testpaper_name,
+            t2.nick_name,
+            t1.score_total,
+            t1.score,
+            t1.user_id,
+            t1.topic_total,
+            t1.topic_right,
+            t1.create_time
+        from ms_answer_testpaper t1
+                 left JOIN sys_user t2
+                           on t1.user_id = t2.user_id
+                 LEFT JOIN ms_testpaper t3
+                           on t1.testpaper_id = t3.testpaper_id
+            ${ew.customSqlSegment}
+    </select>
+
+</mapper>

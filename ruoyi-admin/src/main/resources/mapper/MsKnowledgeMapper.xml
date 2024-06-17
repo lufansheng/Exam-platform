@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.java.mapper.MsKnowledgeMapper">
+
+
+    <select id="getRoot" resultType="com.java.entity.vo.knowledge.MsKnowledgeTreeVo">
+        select t1.knowledge_id,t1.knowledge_name from ms_knowledge t1
+        where t1.subject_id = #{subjectId} and t1.parent_id is NULL
+    </select>
+
+    <select id="getChild" resultType="com.java.entity.vo.knowledge.MsKnowledgeTreeVo">
+        select t1.knowledge_id,t1.knowledge_name from ms_knowledge t1
+        where t1.parent_id = #{parentId}
+    </select>
+
+</mapper>

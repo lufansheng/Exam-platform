@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.java.mapper.MsAnswerTopicMapper">
+
+<insert id="insertTopic">
+    insert into ms_answer_topic (answer_testpaper_id,topic_id,answer) values
+    <foreach collection="answerTopicCreates" item="topic" separator=",">
+        (#{answerTestpaperId},#{topic.topicId},
+         <foreach collection="topic.answer" item="answers" separator="," open="'[" close="]'">"${answers}"</foreach>
+         )
+    </foreach>
+</insert>
+    
+    <resultMap id="selectTopicListMap" type="com.java.entity.vo.answertopic.MsAnswertopicVo">
+        <id property="answerTopicId" column="answer_topic_id"></id>
+        <result property="score" column="score"></result>
+        <result property="isRight" column="is_right"></result>
+        <result property="answer" column="answer"></result>
+        <result property="types" column="types"></result>
+        <result property="scoreTotal" column="score_total"></result>
+        <result property="standarAnswer" column="standar_answer"></result>
+    </resultMap>
+    <select id="selectTopicList" resultMap="selectTopicListMap">
+        SELECT
+            t1.score,
+            t1.is_right,
+            t2.score AS score_total,
+            t1.answer_topic_id,
+            t2.types,
+            t2.answer AS standar_answer,
+            t1.answer
+        FROM
+            ms_answer_topic t1
+                LEFT JOIN ms_topic t2
+                          on t1.topic_id = t2.topic_id
+        WHERE answer_testpaper_id = #{answerTestpaperId}
+
+    </select>
+
+    <select id="getIsEqual" resultType="int">
+        SELECT
+            t2.score
+        FROM ms_answer_topic t1
+                 LEFT JOIN ms_topic t2
+                           on t1.topic_id = t2.topic_id
+        where t1.answer_topic_id = #{answerTopicId}
+    </select>
+</mapper>

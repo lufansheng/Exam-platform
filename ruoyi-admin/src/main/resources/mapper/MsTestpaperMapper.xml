@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.java.mapper.MsTestpaperMapper">
+    <insert id="createTitle" useGeneratedKeys="true" keyProperty="titleId">
+        insert into ms_title(testpaper_id, title_name)
+        value (#{testpaperId},#{titleName})
+    </insert>
+
+    <insert id="createTitleTopic" >
+        insert into ms_title_topic(topic_id, title_id)
+            value (#{topicId},#{titleId})
+    </insert>
+
+    <resultMap id="selectTestpaperByIdMap" type="com.java.entity.vo.testpaper.MsTestpaperDtlVo">
+        <id property="testpaperId" column="testpaper_id"></id>
+        <result property="grade" column="grade"></result>
+        <result property="subjectName" column="subject_name"></result>
+        <result property="types" column="types"></result>
+        <result property="testpaperName" column="testpaper_name"></result>
+        <result property="duration" column="duration"></result>
+        <collection property="msTitleDtlVos" ofType="com.java.entity.vo.title.MsTitleDtlVo">
+            <id property="titleId" column="title_id"></id>
+            <result property="titleName" column="title_name"></result>
+            <collection property="msTopicDtl" ofType="com.java.entity.vo.topic.MsTopicDtl">
+                <result property="optionss" column="optionss"></result>
+                <result property="stem" column="stem"></result>
+            </collection>
+        </collection>
+    </resultMap>
+    <select id="selectTestpaperById" resultMap="selectTestpaperByIdMap">
+        SELECT
+            t5.grade,
+            t5.subject_name,
+            t1.types,
+            t1.testpaper_name,
+            t4.topic_id,
+            t3.title_id,
+            t4.stem,
+            t4.optionss,
+            t2.title_name,
+            t1.duration,
+            t1.testpaper_id
+        FROM
+            ms_testpaper t1
+                LEFT JOIN ms_title t2 ON t1.testpaper_id = t2.testpaper_id
+                LEFT JOIN ms_title_topic t3 ON t3.title_id = t2.title_id
+                LEFT JOIN ms_topic t4 ON t3.topic_id = t4.topic_id
+                LEFT JOIN ms_subject t5 ON t5.subject_id = t1.subject_id
+        WHERE
+            t1.testpaper_id = #{testpaperId} and t1.del_flag != '2'
+
+    </select>
+
+    <resultMap id="selectTestpaperListMap" type="com.java.entity.vo.testpaper.MsTestpaperListVo">
+        <id property="testpaperId" column="testpaper_id"></id>
+        <result property="testpaperName" column="testpaper_name"></result>
+        <result property="subjectName" column="subject_name"></result>
+        <result property="createTime" column="create_time"></result>
+    </resultMap>
+    <select id="selectTestpaperList" resultMap="selectTestpaperListMap">
+        SELECT
+            t2.subject_name,
+            t1.testpaper_name,
+            t1.create_time,
+            t1.testpaper_id
+        FROM ms_testpaper t1
+                 LEFT JOIN ms_subject t2
+                           on t1.subject_id = t2.subject_id
+            ${ew.customSqlSegment}
+    </select>
+</mapper>

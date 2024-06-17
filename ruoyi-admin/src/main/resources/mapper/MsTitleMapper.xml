@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.java.mapper.MsTitleMapper">
+
+    <delete id="deleteTitleTopic">
+        DELETE from ms_title_topic where topic_id = #{topicId} and title_id = #{titleId}
+    </delete>
+
+    <delete id="deleteTitleTopics">
+        DELETE from ms_title_topic where title_id = #{titleId}
+    </delete>
+
+    <update id="deleteTitle">
+        update ms_title set del_flag = '2' where testpaper_id = #{testpaperId}
+    </update>
+</mapper>
